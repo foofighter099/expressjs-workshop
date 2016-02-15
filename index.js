@@ -1,20 +1,43 @@
 var express = require('express');
 var app = express();
 
-function hello(str){
-  return str;
+app.get('/op/:operation/:number1/:number2', function (req, res) {
+var answer;
+var num1 = Number(req.params.number1);
+var num2 = Number(req.params.number2);
+function operation (operand, number1, number2){
+  switch (operand){
+    case 'add':
+      answer= num1 + num2;
+      break;
+    case 'sub':
+      answer= num1 - num2;
+      break;
+    case 'mult':
+      answer= num1*num2;
+      break;
+    case 'div':
+      answer= num1/num2;
+      break; 
+  }
 }
 
-app.get('/hello/:firstName', function (req, res) {
-  var theNameEntered = req.params.firstName;
-  var result = hello(theNameEntered);
-  res.send('Hello ' + result);
+  operation(req.params.operation, num1, num2, answer);
+  var requestedObject = {
+         operator: req.params.operation,
+         firstOperand: num1,
+         secondOperand: num2,
+         solution: answer
+};
+   if (!answer){
+     res.sendStatus(400);
+   }else{
+     res.send(JSON.stringify(requestedObject));
+   } 
 });
 
 
-
-/*Create a web server that can listen to requests for /hello/:firstName, and respond with some HTML that says <h1>Hello _name_!</h1>. 
-For example, if a client requests /hello/John, the server should respond with <h1>Hello John!</h1>*/
+/*Create a web server that can listen to requests for /op/:operation/:number1/:number2 and respond with a JSON object*/
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
 
 // Boilerplate code to start up the web server
